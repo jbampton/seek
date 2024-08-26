@@ -148,12 +148,12 @@ class Parser
     def print_total_number_option(parser)
       parser.on("--print-total [BOOLEAN]", "Print the total number of jobs found and don't auto-open the CSV file if BOOLEAN is true or 'yes'") do |value|
         self.print_total = case value
-                           when TrueClass, "yes", "Yes", "YES"
+                           when TrueClass, "yes", "Yes", "YES", "y", "Y"
                              true
-                           when FalseClass, NilClass, "no", "No", "NO"
+                           when FalseClass, NilClass, "no", "No", "NO", "n", "N"
                              false
                            else
-                             value.to_s.casecmp("true").zero? || value.to_s.casecmp("yes").zero?
+                             value.to_s.casecmp("true").zero? || value.to_s.casecmp("yes").zero? || value.to_s.casecmp("y").zero?
                            end
       end
     end
@@ -206,8 +206,9 @@ if options.worktype.nil?
   options.worktype = $stdin.gets.chomp
 end
 if options.print_total.nil?
-  print "Only print the total number of jobs found? (yes/no): "
-  options.print_total = $stdin.gets.chomp.casecmp("yes").zero?
+  print "Only print the total number of jobs found? (yes [y] / no [n]) (default no): "
+  pt = $stdin.gets.chomp
+  options.print_total = pt.casecmp("yes").zero? || pt.casecmp("y").zero?
 end
 
 agent = Mechanize.new
